@@ -30,11 +30,11 @@ class QuerySet(qs.QuerySet):
 
     @property
     def _prefetch_related_lookups(self):
-        # Originally used in django for prefetch_related(), 
+        # Originally used in django for prefetch_related(),
         # see https://docs.djangoproject.com/en/1.9/ref/models/querysets/#prefetch-related
         # returning empty list to presume that no query prefetch is required
         return []
-    
+
     def iterator(self):
         return self
 
@@ -87,7 +87,23 @@ class QuerySet(qs.QuerySet):
                 pass
             six.reraise(*exc_info)
 
+    def order_by(self, *keys):
+        """Order the :class:`~mongoengine.queryset.QuerySet` by the keys. The
+        order may be specified by prepending each of the keys by a + or a -.
+        Ascending order is assumed.
 
+        :param keys: fields to order the query results by; keys may be
+        prefixed with **+** or **-** to determine the ordering direction
+        """
+        queryset = self.clone()
+        new_keys = []
+        for k in keys:
+            if type(k) == tuple:
+                new_keys.append(k[0])
+            else:
+                new_keys.append(k)
+        queryset._ordering = queryset._get_order_by(tuple(new_keys))
+        return queryset
 
 
 class QuerySetManager(qs.QuerySetManager):
