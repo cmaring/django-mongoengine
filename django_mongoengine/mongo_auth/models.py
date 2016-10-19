@@ -209,7 +209,7 @@ class User(document.Document):
     meta = {
         'allow_inheritance': True,
         'indexes': [
-            {'fields': ['username'], 'unique': True, 'sparse': True}
+            {'fields': ['username'], 'unique': True, 'sparse': False}
         ]
     }
 
